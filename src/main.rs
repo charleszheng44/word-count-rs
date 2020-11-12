@@ -1,5 +1,6 @@
 use clap::Clap;
 mod genfile;
+mod countword;
 
 #[derive(Clap)]
 #[clap(version = "1.0", author = "Chao Zheng <charleszheng44@gmail.com>")]
@@ -28,7 +29,7 @@ struct FileGenerator {
     oup_dir: String
 }
 
-// A subcommand for counting words in the files under the directory
+/// A subcommand for counting words in the files under the directory
 #[derive(Clap)]
 struct WordCounter {
     #[clap(short, long)]
@@ -56,8 +57,8 @@ fn main() {
                 fg.num_files, 
                 fg.max_num_words).unwrap();
         }
-        SubCommand::CountWord(_) => {
-            unreachable!()
+        SubCommand::CountWord(wc) => {
+            countword::count_word_mutex(wc.inp_dir).unwrap();
         }
     }
 }
