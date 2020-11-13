@@ -1,6 +1,7 @@
 use clap::Clap;
 mod genfile;
 mod countword;
+use std::time::Instant;
 
 #[derive(Clap)]
 #[clap(version = "1.0", author = "Chao Zheng <charleszheng44@gmail.com>")]
@@ -33,7 +34,9 @@ struct FileGenerator {
 #[derive(Clap)]
 struct WordCounter {
     #[clap(short, long)]
-    inp_dir: String
+    inp_dir: String,
+    #[clap(short, long, default_value = "mutex")]
+    mode: String,
 }
 
 fn main() {
@@ -58,7 +61,13 @@ fn main() {
                 fg.max_num_words).unwrap();
         }
         SubCommand::CountWord(wc) => {
-            countword::count_word_mutex(wc.inp_dir).unwrap();
+            let before =Instant::now();
+            match wc.mode.as_str() {
+                "mutex" => {countword::count_word_mutex(wc.inp_dir).unwrap();},
+                "channel" => {countword::count_word_mpsc(wc.inp_dir).unwrap();},
+                _ => {panic!("unknown mode {}, available modes are: mutex, channel", wc.mode.as_str());},
+            }
+            println!("Count words took: {:.2?}", before.elapsed());
         }
     }
 }
