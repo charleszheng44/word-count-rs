@@ -65,7 +65,8 @@ fn main() {
             match wc.mode.as_str() {
                 "mutex" => {countword::count_word_mutex(wc.inp_dir).unwrap();},
                 "channel" => {countword::count_word_mpsc(wc.inp_dir).unwrap();},
-                _ => {panic!("unknown mode {}, available modes are: mutex, channel", wc.mode.as_str());},
+                "seq" => {countword::count_word_seq(wc.inp_dir).unwrap();},
+                _ => {panic!("unknown mode {}, available modes are: mutex, channel, seq", wc.mode.as_str());},
             }
             println!("Count words took: {:.2?}", before.elapsed());
         }

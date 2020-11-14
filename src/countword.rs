@@ -5,6 +5,27 @@ use std::collections;
 use super::genfile;
 use std::sync::{Arc, Mutex, mpsc};
 
+pub fn count_word_seq(inp_dir: String) -> io::Result<()> {
+    let mut word_count = collections::HashMap::<String, u32>::new();
+    let paths = fs::read_dir(inp_dir)?;
+    // iterate all files 
+    for result_path in paths {
+        let path = result_path?;
+        let lines = genfile::read_lines(path.path())?;
+        // count words in each files
+        for line in lines {
+            if let Ok(word) = line {
+                match word_count.get_mut(&word) {
+                    Some(c) => { *c += 1;},
+                    None => {word_count.insert(word, 1);},
+                }
+            }
+        }
+    }
+    println!("{:?}", word_count);
+    Ok(())
+}
+
 pub fn count_word_mutex(inp_dir: String) -> io::Result<()>{
     // 1. create a global map
     let word_count = collections::HashMap::<String, u32>::new();
